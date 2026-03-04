@@ -3,4 +3,15 @@ title: "index"
 format: html
 ---
 
+## Course Lessons
+
+- Introduction to Quarto
+- Introduction to git and GitHub
+- Cleaning and Wrangling data
+
+## Course Practice Session
+
+- Practice I
+- Practice II
+- Practice III
 
