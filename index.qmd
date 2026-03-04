@@ -8,6 +8,7 @@ format: html
 - [Introduction to Quatro](quarto-intro.html)
 - Introduction to git and [GitHub](http://github.com)
 - [Cleaning and Wrangling data](scripts/tidy_and_wrangling.html)
+- [Visualization](intro_visualization.html)
 
 ## Course Practice Session
 
