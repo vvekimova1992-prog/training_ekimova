@@ -2,24 +2,87 @@
 title: "R Practice: Functions"
 format: html
 ---
-
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
+## Load the necessary libraries
 ```{r}
-1 + 1
+library(rvest)
+library(readr)
+library(dplyr)
+library(janitor)
+library(here)
 ```
 
-You can add options to executable code like this 
-
+## Load the species table
 ```{r}
-#| echo: false
-2 * 2
+webpage <- rvest::read_html("https://www.pwrc.usgs.gov/BBL/Bander_Portal/login/speclist.php")
+
+tbls <- rvest::html_nodes(webpage, "table") %>% 
+    rvest::html_table(fill = TRUE)
+
+species <- tbls[[1]] %>% 
+    janitor::clean_names() %>% 
+    select(alpha_code, common_name) %>% 
+    mutate(alpha_code = tolower(alpha_code))
+
+head(species, 3)
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+## Read in each data file and store the data frame as nest_data, predator_survey, and egg_measures accordingly. After reading the data, insert a new chunk or in the console, explore the data using any function we have used during the lessons (eg. colname(), glimpse())
+```{r}
+## Reading data
+nest_data <-  read_csv(here("data/Utqiagvik_nest_data.csv"))
+
+predator_survey <- read_csv(here("data/Utqiagvik_predator_surveys.csv"))
+
+egg_measures <- read_csv(here("data/Utqiagvik_egg_measurements.csv"))
+```
+
+## Explore the data
+```{r}
+colnames(predator_survey)
+glimpse(predator_survey)
+unique(predator_survey$species)
+summary(predator_survey)
+```
+## Translate species codes into common names
+```{r}
+predator_comm_names <- left_join(predator_survey,
+                                 species,
+                                 by = c("species" = "alpha_code"))
+```
+
+## Functions to add species common name to any data frame
+```{r}
+#' Functions to add species common name to any data frame
+#'
+#' @param df containing species codes in "species"
+#' @param species species codes with "alpha_code" and "common_name"
+#'
+#' @returns Original data frame with addition of common name of species
+#' @export
+#'
+#' @examples 
+#' #' predator_with_names <- assign_species_name(predator_survey, species)
+#' head(predator_with_names)
+#' 
+#' 
+assign_species_name <- function(df, species){
+    return_df <- left_join(df, species, by = c("species" = "alpha_code"))
+    return(return_df)
+}
+```
+
+## Use the function to clean names of each data frame
+```{r}
+predator_clean <- assign_species_name(predator_survey, species) %>% 
+    select(year, site, date, common_name, count) %>% 
+    filter(!is.na(common_name))
+
+nest_location_clean <- assign_species_name(nest_data, species) %>% 
+    select(year, site, nestID, common_name, lat_corrected, long_corrected) %>% 
+    filter(!is.na(common_name))
+
+eggs_clean <- assign_species_name(egg_measures, species) %>% 
+    select(year, site, nestID, common_name, length, width) %>% 
+    filter(!is.na(common_name))
+```
+
