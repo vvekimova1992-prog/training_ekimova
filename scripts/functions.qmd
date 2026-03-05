@@ -1,0 +1,49 @@
+---
+title: "functions"
+format: html
+---
+```{r}
+interior_f <- c(175, 134, 181)
+interior_c <- (interior_f - 32) * 5/9
+
+exterior_f <- c(77, 78, 77)
+exterior_c <- (exterior_f - 32) * 5/9
+
+surface_f <- c(103, 102, 99)
+surface_c <- (surface_f - 32) * 5/9
+```
+
+```{r}
+convert_f_to_c <- function(fahr) {
+  celsius <- (fahr - 32) * 5/9
+  return(celsius)
+}
+```
+
+```{r}
+surface_c_v2 <- convert_f_to_c(fahr = surface_f)
+surface_c_v2
+```
+
+```{r}
+identical(surface_c_v2, surface_c)
+```
+
+```{r}
+# Function to convert Celsius to Fahrenheit
+convert_c_to_f <- function(celsius) {
+  fahr <- celsius * 9/5 + 32
+  return(fahr)
+}
+```
+
+```{r}
+convert_temps <- function(fahr) {
+  celsius <- (fahr - 32) * 5/9
+  kelvin <- celsius + 273.15
+  return(list(fahr = fahr, celsius = celsius, kelvin = kelvin))
+}
+
+surface_temps_df <- data.frame(convert_temps(fahr = surface_f))
+```
+
