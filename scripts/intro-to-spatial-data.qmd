@@ -84,11 +84,6 @@ pop_4326_sf <- st_as_sf(pop_df,
 head(pop_4326_sf)
 ```
 
-```{r}
-pop_joined_sf <- st_join(pop_4326_sf, 
-                         ak_rgns_3338_sf, 
-                         join = st_within)
-```
 
 ```{r}
 pop_3338_sf <- st_transform(pop_4326_sf, 
